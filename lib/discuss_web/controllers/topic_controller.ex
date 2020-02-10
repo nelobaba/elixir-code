@@ -3,8 +3,11 @@ defmodule DiscussWeb.TopicController do
   alias DiscussWeb.Topic
   alias Discuss.Repo
 
+  # The plug should execute before any of those handlers are called
+  plug DiscussWeb.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
+  plug :check_topic_owner when action in [:edit, :update, :delete]
+
   def index(conn, _params) do
-    IO.inspect(conn.assigns)
     topics = Repo.all(Topic) #Get all records of type topic
     render(conn, "index.html", topics: topics)
   end
@@ -21,7 +24,9 @@ defmodule DiscussWeb.TopicController do
   #   "topic" => %{"title" => "Nelson"}
   # } // This is what params looks like, we are pattern matching it away
   def create(conn, %{"topic" => topic}) do
-    changeset = Topic.changeset(%Topic{}, topic)
+    changeset = conn.assigns.user
+    |> build_assoc(:topics)
+    |> Topic.changeset(topic)
 
     case Repo.insert(changeset) do
       {:ok, _topic} ->
@@ -62,5 +67,18 @@ defmodule DiscussWeb.TopicController do
       conn
       |> put_flash(:info, "Topic Deleted")
       |> redirect(to: Routes.topic_path(conn, :index))
+  end
+
+  def check_topic_owner(conn, _params) do
+    %{params: %{"id" => topic_id}} = conn
+
+    if Repo.get(Topic, topic_id).user_id == conn.assigns.user.id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You are not authorized to perform this action")
+      |> redirect(to: Routes.topic_path(conn, :index))
+      |> halt()
+    end
   end
 end

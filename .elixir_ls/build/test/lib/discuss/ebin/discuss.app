@@ -15,6 +15,7 @@
                         'Elixir.DiscussWeb.ErrorView',
                         'Elixir.DiscussWeb.Gettext',
                         'Elixir.DiscussWeb.LayoutView',
+                        'Elixir.DiscussWeb.Plugs.RequireAuth',
                         'Elixir.DiscussWeb.Plugs.SetUser',
                         'Elixir.DiscussWeb.Router',
                         'Elixir.DiscussWeb.Router.Helpers',

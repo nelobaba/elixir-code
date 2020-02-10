@@ -6,6 +6,7 @@ defmodule DiscussWeb.User do
     field :email, :string
     field :provider, :string
     field :token, :string
+    has_many(:topics, DiscussWeb.Topic) #Each user has many topics and each topic should be an instance of DiscussWeb.Topic
 
     timestamps()
   end
