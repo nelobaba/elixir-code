@@ -7,6 +7,7 @@ defmodule DiscussWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug DiscussWeb.Plugs.SetUser
   end
 
   pipeline :api do
@@ -14,7 +15,7 @@ defmodule DiscussWeb.Router do
   end
 
   scope "/", DiscussWeb do
-    pipe_through :browser #Use te default browser stacks
+    pipe_through :browser #Use the default browser stack
 
     # get "/", TopicController, :index
     # get "/topics/new", TopicController, :new
@@ -24,6 +25,14 @@ defmodule DiscussWeb.Router do
     # delete "/topics/:id", TopicController, :delete
 
     resources "/", TopicController
+  end
+
+  scope "/auth", DiscussWeb do
+    pipe_through :browser #pipe_through are usd to do pre-processing before the request is forwarded to any controller
+
+    get "/signout", AuthController, :signout
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
   end
 
   # Other scopes may use custom stacks.
