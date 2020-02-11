@@ -12,6 +12,11 @@ defmodule DiscussWeb.TopicController do
     render(conn, "index.html", topics: topics)
   end
 
+  def show(conn, %{"id" => topic_id}) do
+    topic = Repo.get!(Topic, topic_id)
+    render conn, "show.html", topic: topic
+  end
+
   @spec new(Plug.Conn.t(), any) :: Plug.Conn.t()
   def new(conn, _params) do
     changeset = Topic.changeset(%Topic{}, %{})

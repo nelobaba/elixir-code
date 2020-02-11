@@ -68,6 +68,7 @@ defmodule DiscussWeb do
     quote do
       use Phoenix.Channel
       import DiscussWeb.Gettext
+      import Ecto
     end
   end
 
